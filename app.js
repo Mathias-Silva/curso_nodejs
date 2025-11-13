@@ -1,7 +1,10 @@
 import express from 'express';
+import cors from 'cors';
 
 const servidor = express();
 servidor.use(express.json());
+servidor.use(cors());
+
 
 servidor.get('/helloworld', (req, resp) => {
     
@@ -26,7 +29,13 @@ servidor.get('/mensagem/ocupado/recado',(req,resp)=>{
 
 
 // endpoint com parametros de rota
-servidor.get('/calculadora/soma/:n1/:n2',(req,resp)=>{
+servidor.get('/calculadora/somar/:n1/:n2',(req,resp)=>{
+
+    if(isNaN(req.params.n1) || isNaN(req.params.n2)){
+        resp.status(400).send({ erro: 'Os parametros n1 e n2 devem ser numeros válidos'});
+        return;
+    }
+
     const n1 = Number(req.params.n1);
     const n2 = Number(req.params.n2);
     const soma = n1 + n2;
