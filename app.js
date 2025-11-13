@@ -65,6 +65,31 @@ servidor.post('/media', (req,resp)=>{
 	resp.send(' A média é '+ media);
 })
 
+servidor.post('/dobros', (req,resp) =>{
+    let nums = req.body.numeros;
+    let nums2 = [];
+    for(let i=0; i<nums.length;i ++){
+        nums2[i] = nums[i] * 2;
+    }
+    resp.send('os dobros dos numeros são '+ nums2);
+})
+
+servidor.post('/loja/pedido', (req,resp)=>{
+	let total = req.body.total;
+	let parcelas = req.body.parcelas;
+	let cupom = req.query.cupom;
+
+if(parcelas > 1){
+	let juros  = total * 0.05;
+	total += juros;
+}
+if(cupom == 'QUERO100'){
+ total -= 100;
+}
+resp.send(`O total do pedido é R$ ${total.toFixed(2)}`);
+});
+
+
 servidor.listen(5001, () => {
     console.log('Servidor rodando na porta 5001');
 });
