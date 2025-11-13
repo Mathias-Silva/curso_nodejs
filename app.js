@@ -86,7 +86,7 @@ if(parcelas > 1){
 if(cupom == 'QUERO100'){
  total -= 100;
 }
-resp.send(`O total do pedido é R$ ${total.toFixed(2)}`);
+resp.send(`O total do pedido é R$ ${total}`);
 });
 
 
