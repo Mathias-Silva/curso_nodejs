@@ -4,21 +4,24 @@ const servidor = express();
 servidor.use(express.json());
 
 servidor.get('/helloworld', (req, resp) => {
-    resp.send('Hello world!!');
+    
+
+    resp.send({ mensagem: 'Hello world!!' });
+
 });
 
 servidor.get('/mensagem/boasvindas',(req,resp) => {
-    resp.send('Olá, sejam bem-vindos e bem vindas!');
+    resp.send({menssagem: 'Olá, sejam bem-vindos e bem vindas!'});
 });
 
 servidor.get('/v2/mensagem/boasvindas',(req,resp) => {
-    resp.send('Que bom que você está aqui!!!');
+    resp.send({ mensagem: 'Que bom que você está aqui!!!' });
 });
 servidor.get('/mensagem/ocupado',(req,resp)=>{
-    resp.send("Estou ocupado no momento!")
+    resp.send({ mensagem: "Estou ocupado no momento!" });
 });
 servidor.get('/mensagem/ocupado/recado',(req,resp)=>{
-    resp.send("Estou ocupado no momento, deixe uma mensagem no email contato@meusite.com")
+    resp.send({ mensagem: "Estou ocupado no momento, deixe uma mensagem no email contato@meusite.com" });
 });
 
 
@@ -27,7 +30,7 @@ servidor.get('/calculadora/soma/:n1/:n2',(req,resp)=>{
     const n1 = Number(req.params.n1);
     const n2 = Number(req.params.n2);
     const soma = n1 + n2;
-    resp.send(`A soma entre ${n1} e ${n2} é igual a ${soma}`);
+    resp.send({ soma: soma});
 })
 
 
@@ -36,20 +39,23 @@ servidor.get('/calculadora/subtrair/:n1/:n2',(req,resp)=>{
 const n1 = Number(req.params.n1);
 const n2 = Number(req.params.n2);
 const subtracao = n1 - n2;
-resp.send(`A subtração de ${n1} - ${n2} é igual a ${subtracao}`);
+resp.send(
+    {
+        subtracao:subtracao
+    });
 })
 
 
 // endpoint com parametros de query string e number
 servidor.get('/mensagem', (req,resp)=>{
 	const nome = req.query.nome ?? 'visitante';
-    resp.send(`Olá, ${nome}!`);
+    resp.send({ mensagem: `Olá, ${nome}!` });
 });
 servidor.get('/calculadora/somar2', (req,resp)=>{
 	const n1 = Number(req.query.n1);
 	const n2 = Number(req.query.n2);
 	const soma = n1 + n2;
-	 resp.send(`A soma entre ${n1} e ${n2} é igual a ${soma}`);
+	 resp.send({ soma: soma });
 });
 
 //endoint com parametros de corpo da requisição - POST
@@ -62,7 +68,7 @@ servidor.post('/media', (req,resp)=>{
 		
 	let media = (n1+n2+n3) / 3;
 
-	resp.send(' A média é '+ media);
+	resp.send({ media: media });
 })
 
 servidor.post('/dobros', (req,resp) =>{
@@ -71,7 +77,7 @@ servidor.post('/dobros', (req,resp) =>{
     for(let i=0; i<nums.length;i ++){
         nums2[i] = nums[i] * 2;
     }
-    resp.send('os dobros dos numeros são '+ nums2);
+    resp.send({ dobros: nums2 });
 })
 
 servidor.post('/loja/pedido', (req,resp)=>{
@@ -86,8 +92,42 @@ if(parcelas > 1){
 if(cupom == 'QUERO100'){
  total -= 100;
 }
-resp.send(`O total do pedido é R$ ${total}`);
+let valorParcela = total / parcelas;
+resp.send(
+    { 
+    total: total,
+    valorParcela: valorParcela
 });
+});
+
+
+servidor.post('/loja/pedido/completo', (req,resp)=>{
+    let parcelas = req.body.parcelas;
+    let itens = req.body.itens;
+    let cupom = req.query.cupom;
+
+    let total = 0;
+
+    for(let produto  of itens){
+        total += produto.preco
+    }
+
+    if(parcelas > 1){
+        let juros = total * 0.05;
+        total += juros;
+    }
+    if(cupom == 'QUERO100'){
+        total -= 100;
+    }
+    let valorParcela = total / parcelas;
+    resp.send({
+        total: total,
+        qtdParcelas: parcelas,
+        valorParcela: valorParcela});
+
+});
+
+
 
 
 servidor.listen(5001, () => {
